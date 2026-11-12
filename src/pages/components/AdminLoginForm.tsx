@@ -36,9 +36,9 @@ export const LoginForm: React.FC<LoginFormProps> = () => {
           <div className="w-12 h-12 rounded-xl bg-[#10141D] border border-white/8 flex items-center justify-center font-mono font-bold text-[#43D9C3] mx-auto mb-4 text-lg">
             🔐
           </div>
-          <span className="text-xs font-mono text-[#43D9C3] uppercase tracking-widest block mb-1">FIREBASE SECURE PORTAL</span>
+          <span className="text-xs font-mono text-[#43D9C3] uppercase tracking-widest block mb-1">SECURE PORTAL</span>
           <h1 className="text-2xl font-bold tracking-tight">Yönetici Girişi</h1>
-          <p className="text-xs text-[#9299A8] mt-1">Firebase hesap bilgilerinizi girin.</p>
+          <p className="text-xs text-[#9299A8] mt-1">Hesap bilgilerinizi girin.</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">

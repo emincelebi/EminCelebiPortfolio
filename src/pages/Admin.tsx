@@ -226,7 +226,7 @@ export const Admin: React.FC = () => {
         <div className="flex items-center justify-between mb-10 pb-6 border-b border-white/8">
           <div>
             <span className="text-xs font-mono text-[#43D9C3] uppercase tracking-widest block mb-1">
-              FIREBASE ADMIN PANEL
+              ADMIN PANEL
             </span>
 
             <h1 className="text-3xl font-bold tracking-tight">

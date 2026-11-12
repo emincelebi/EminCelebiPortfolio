@@ -35,7 +35,7 @@ export const Contact: React.FC = () => {
       const isSuccess = await sendMessage(name, email, message);
 
       if (!isSuccess) {
-        throw new Error('Mesaj Firebase veritabanına kaydedilemedi.');
+        throw new Error('Mesaj veritabanına kaydedilemedi.');
       }
 
       setStatus('success');
@@ -46,7 +46,7 @@ export const Contact: React.FC = () => {
     } catch (err: any) {
       console.error('Mesaj gönderilemedi:', err);
       setStatus('error');
-      setErrorMessage(err.message || 'Firebase bağlantı hatası oluştu.');
+      setErrorMessage(err.message || 'Bağlantı hatası oluştu.');
     }
   };
 
@@ -55,7 +55,7 @@ export const Contact: React.FC = () => {
       <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className={STYLES.headerWrapper}>
         <span className={STYLES.sectionTag}>{t('İLETİŞİM', 'CONTACT')}</span>
         <h2 className={STYLES.sectionTitle}>{t('Harika Şeyler İnşa Edelim.', "Let's Build Something Great.")}</h2>
-        <p className={STYLES.sectionSubtitle}>{t('Bir projeniz mi var? Doğrudan Firebase veritabanına mesaj gönderin.', 'Have an inquiry? Send a message directly to Firebase database.')}</p>
+        <p className={STYLES.sectionSubtitle}>{t('Bir projeniz mi var? Bize mesaj gönderin.', 'Have an inquiry? Send a message directly to us.')}</p>
       </motion.div>
 
       <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} className={STYLES.formCard}>
@@ -80,7 +80,7 @@ export const Contact: React.FC = () => {
           </div>
 
           <button type="submit" disabled={status === 'loading'} className={STYLES.submitButton}>
-            {status === 'loading' ? t('Gönderiliyor...', 'Sending...') : status === 'success' ? t('✓ Mesaj Firebase’e Kaydedildi!', '✓ Message Saved to Firebase!') : t('Mesaj Gönder →', 'Send Message →')}
+            {status === 'loading' ? t('Gönderiliyor...', 'Sending...') : status === 'success' ? t('✓ Mesaj Kaydedildi!', '✓ Message Saved!') : t('Mesaj Gönder →', 'Send Message →')}
           </button>
 
           {status === 'error' && (
@@ -111,7 +111,7 @@ export const Contact: React.FC = () => {
                 <strong>1. Veri Sorumlusunun Kimliği:</strong> 6698 sayılı Kişisel Verilerin Korunması Kanunu (“KVKK”) uyarınca, kişisel verileriniz veri sorumlusu sıfatıyla portfolyo sahibi tarafından işlenmektedir.
               </p>
               <p>
-                <strong>2. Kişisel Verilerin İşlenme Amacı:</strong> İletişim formu aracılığıyla paylaştığınız ad, e-posta adresiniz ve mesaj içeriğiniz; sizinle iletişime geçmek, taleplerinizi yanıtlamak ve olası iş/proje süreçlerini yürütmek amacıyla Firebase veritabanında güvenli bir şekilde saklanır.
+                <strong>2. Kişisel Verilerin İşlenme Amacı:</strong> İletişim formu aracılığıyla paylaştığınız ad, e-posta adresiniz ve mesaj içeriğiniz; sizinle iletişime geçmek, taleplerinizi yanıtlamak ve olası iş/proje süreçlerini yürütmek amacıyla veritabanında güvenli bir şekilde saklanır.
               </p>
               <p>
                 <strong>3. İşlenen Verilerin Aktarıldığı Yerler:</strong> Toplanan kişisel verileriniz, hukuki zorunluluklar haricinde hiçbir üçüncü şahısla paylaşılmaz; Firebase Cloud Firestore altyapısı üzerinde güvenle muhafaza edilir.
