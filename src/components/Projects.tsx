@@ -41,7 +41,7 @@ export const Projects: React.FC = () => {
           {t('Projelerim', 'My Projects')}
         </h2>
         <p className={STYLES.sectionSubtitle}>
-          {t('Veritabanından dinamik olarak çekilen projeler ve mimari yapılar.', 'Projects and architectural systems fetched dynamically from database.')}
+          {t('Githubda yayınladığım projeler ve mimari yapılar.', 'Projects and architectural structures I have published on GitHub.')}
         </p>
       </motion.div>
 

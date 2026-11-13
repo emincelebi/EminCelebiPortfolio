@@ -25,8 +25,8 @@ export const Hero: React.FC = () => {
   };
 
   const heroData = data?.hero || {
-    headingTr: "Fikirleri Dijital Deneyimlere Dönüştürüyorum.",
-    headingEn: "Turning Ideas Into Digital Experiences.",
+    headingTr: "Fikirleri Dijital Ürünlere Dönüştürüyorum.",
+    headingEn: "Turning Ideas Into Digital Products.",
     descTr: "Modern mobil uygulamalar ve ölçeklenebilir backend sistemleri geliştiriyorum.",
     descEn: "I build modern mobile applications and scalable backend systems."
   };
@@ -80,14 +80,13 @@ export const Hero: React.FC = () => {
            
             <div className={STYLES.codeBody}>
               <p className="text-[#43D9C3]">// Core System Architecture</p>
-              <p><span className="text-[#7C83FF]">class</span> <span className="text-white">SoftwareEngineer</span> &#123;</p>
+              <p><span className="text-[#7C83FF]">class</span> <span className="text-white">EminCelebi</span> &#123;</p>
               <p className="pl-4">name: <span className="text-[#43D9C3]">{`'${data?.profile.name || 'Muhammet Emin Çelebi'}'`}</span>,</p>
               <p className="pl-4">role: <span className="text-[#7C83FF]">'Software Engineer'</span>,</p>
               <p className="pl-4">frontend: <span className="text-[#43D9C3]">['Flutter', 'React']</span>,</p>
               <p className="pl-4">backend: <span className="text-[#43D9C3]">['.NET', 'Node.js']</span>,</p>
               <p className="pl-4">database: <span className="text-[#43D9C3]">['PostgreSQL', 'SQLite', 'Firebase']</span>,</p>
               <p className="pl-4">architecture: <span className="text-[#7C83FF]">'Clean Architecture'</span>,</p>
-              <p className="pl-4">stateManagement: <span className="text-[#43D9C3]">['BLoC', 'Riverpod', 'Provider']</span>,</p>
               <p>&#125;</p>
             </div>
 

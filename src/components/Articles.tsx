@@ -34,8 +34,8 @@ const I18N_TEXTS = {
     en: 'Thoughts, Notes & Engineering.',
   },
   subtitle: {
-    tr: 'Doğrudan Medium yayıncı hesabımdan çekilen teknik makaleler.',
-    en: 'Technical reflections fetched directly from my Medium publication.',
+    tr: 'Medium üstünden yayınladığım teknik yazılarım ve makalelerim.',
+    en: 'My technical writings and articles published on Medium.',
   },
   loading: {
     tr: 'Medium yazıları yükleniyor...',

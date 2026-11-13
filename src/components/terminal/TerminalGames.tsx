@@ -62,8 +62,8 @@ interface TicTacToeProps {
 export const TicTacToeGame: React.FC<TicTacToeProps> = ({ board, turn, winner, onCellClick }) => (
   <div className="flex flex-col items-center justify-center h-full space-y-3">
     <div className="flex items-center justify-between w-full max-w-xs px-2 text-[#43D9C3] font-bold text-xs">
-      <span>❌ TIC-TAC-TOE (XOX)</span>
-      <span>{winner ? 'BİTTİ' : `Sıra: ${turn}`}</span>
+      <span>❌ XOX (VS BİLGİSAYAR)</span>
+      <span>{winner ? 'BİTTİ' : turn === 'X' ? 'Sıra: Sen (X)' : 'Bilgisayar Düşünüyor...'}</span>
     </div>
     <div className="grid grid-cols-3 gap-2 bg-[#10141D] p-3 rounded-xl border border-[#43D9C3]/40">
       {board.map((val, idx) => (
@@ -79,12 +79,12 @@ export const TicTacToeGame: React.FC<TicTacToeProps> = ({ board, turn, winner, o
     {winner ? (
       <div className="text-center space-y-1">
         <div className="text-amber-400 font-bold">
-          {winner === 'DRAW' ? '🤝 BERABERE!' : `🎉 KAZANAN: ${winner}`}
+          {winner === 'DRAW' ? '🤝 BERABERE!' : winner === 'X' ? '🎉 TEBRİKLER, KAZANDIN!' : '🤖 BİLGİSAYAR KAZANDI!'}
         </div>
         <div className="text-zinc-400 text-[11px]">Tekrar: <span className="text-[#43D9C3]">restart</span> • Çıkış: <span className="text-[#43D9C3]">exit</span></div>
       </div>
     ) : (
-      <div className="text-zinc-400 text-[11px]">Kutulara tıklayarak hamle yap • Çıkış: <span className="text-[#43D9C3]">exit</span></div>
+      <div className="text-zinc-400 text-[11px]">Kutulara tıklayarak hamleni yap • Çıkış: <span className="text-[#43D9C3]">exit</span></div>
     )}
   </div>
 );

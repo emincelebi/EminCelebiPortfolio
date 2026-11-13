@@ -129,8 +129,8 @@ const DEFAULT_DATA: PortfolioData = {
   },
 
   hero: {
-    headingTr: 'Fikirleri Dijital Deneyimlere Dönüştürüyorum.',
-    headingEn: 'Turning Ideas Into Digital Experiences.',
+    headingTr: 'Fikirleri Dijital Ürünlere Dönüştürüyorum.',
+    headingEn: 'Turning Ideas Into Digital Products.',
     descTr:
       'Modern mobil uygulamalar ve ölçeklenebilir backend sistemleri geliştiriyorum.',
     descEn:

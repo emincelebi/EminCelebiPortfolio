@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '../context/LanguageContext';
-import  eminLogo  from '../assets/emin.png';
+import  eminLogo  from '../assets/emin.webp';
 
-// --- DESIGN TOKENS & STYLING VARIABLES ---
 const STYLES = {
   header: "fixed top-0 left-0 right-0 z-50 bg-[#080A0F]/80 backdrop-blur-xl border-b border-white/8",
   container: "max-w-7xl mx-auto px-6 h-20 flex items-center justify-between",
@@ -21,7 +20,6 @@ const STYLES = {
   mobileDropdown: "lg:hidden bg-[#080A0F] border-b border-white/8 px-6 py-6 flex flex-col gap-4 font-mono text-xs",
 };
 
-// --- I18N TEXT DICTIONARY ---
 const I18N_TEXTS = {
   softwareEng: {
     tr: 'Yazılım Mühendisi',
@@ -44,7 +42,7 @@ const I18N_TEXTS = {
     en: 'Contact',
   },
   profProfile: {
-    tr: 'Benim Sosyal Medya ve Profesyonel Hesaplarım',
+    tr: 'Sosyal Medya ve Profesyonel Hesaplarım',
     en: 'My Social Media & Professional Accounts',
   },
   university: {

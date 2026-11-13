@@ -45,7 +45,7 @@ export const FloatingTerminal: React.FC = () => {
   const [history, setHistory] = useState<CommandHistory[]>([
     { 
       command: '/init', 
-      output: 'EminOS v6.2 Aktif. Arcade oyunları için "game" yaz!', 
+      output: 'EminOS v6.3 Aktif.', 
       type: 'info' 
     },
   ]);
@@ -200,6 +200,61 @@ export const FloatingTerminal: React.FC = () => {
     return () => clearInterval(interval);
   }, [activeGame, invadersOver]);
 
+  // Bilgisayar Hamlesi (XOX AI)
+  useEffect(() => {
+    if (activeGame !== 'tictactoe' || tttTurn !== 'O' || tttWinner) return;
+
+    const timer = setTimeout(() => {
+      const emptyIndices = tttBoard
+        .map((val, idx) => (val === '' ? idx : null))
+        .filter((val) => val !== null) as number[];
+
+      if (emptyIndices.length === 0) return;
+
+      let moveIdx = -1;
+
+      // 1. Bilgisayar kazanabiliyorsa hamle yap
+      for (let idx of emptyIndices) {
+        const testBoard = [...tttBoard];
+        testBoard[idx] = 'O';
+        if (checkTttWinner(testBoard) === 'O') {
+          moveIdx = idx;
+          break;
+        }
+      }
+
+      // 2. Oyuncu kazanacaksa engelle
+      if (moveIdx === -1) {
+        for (let idx of emptyIndices) {
+          const testBoard = [...tttBoard];
+          testBoard[idx] = 'X';
+          if (checkTttWinner(testBoard) === 'X') {
+            moveIdx = idx;
+            break;
+          }
+        }
+      }
+
+      // 3. Rastgele boş bir yere oyna
+      if (moveIdx === -1) {
+        moveIdx = emptyIndices[Math.floor(Math.random() * emptyIndices.length)];
+      }
+
+      const newBoard = [...tttBoard];
+      newBoard[moveIdx] = 'O';
+      setTttBoard(newBoard);
+
+      const win = checkTttWinner(newBoard);
+      if (win) {
+        setTttWinner(win);
+      } else {
+        setTttTurn('X');
+      }
+    }, 400);
+
+    return () => clearTimeout(timer);
+  }, [activeGame, tttTurn, tttBoard, tttWinner]);
+
   const startSnakeGame = () => {
     setSnakePos([{ x: 6, y: 5 }, { x: 5, y: 5 }, { x: 4, y: 5 }]);
     setFoodPos({ x: 15, y: 5 });
@@ -242,16 +297,16 @@ export const FloatingTerminal: React.FC = () => {
   };
 
   const handleTttCellClick = (idx: number) => {
-    if (tttBoard[idx] !== '' || tttWinner) return;
+    if (tttBoard[idx] !== '' || tttWinner || tttTurn !== 'X') return;
     const newBoard = [...tttBoard];
-    newBoard[idx] = tttTurn;
+    newBoard[idx] = 'X';
     setTttBoard(newBoard);
 
     const win = checkTttWinner(newBoard);
     if (win) {
       setTttWinner(win);
     } else {
-      setTttTurn(tttTurn === 'X' ? 'O' : 'X');
+      setTttTurn('O');
     }
   };
 
@@ -377,9 +432,9 @@ export const FloatingTerminal: React.FC = () => {
             <div className="text-[#43D9C3] font-bold">🎮 EMINOS ARCADE - OYUN SEÇİN:</div>
             <div>1. <span className="text-amber-400 font-bold">snake</span> - Retro Yılan Oyunu (Ok Tuşları)</div>
             <div>2. <span className="text-amber-400 font-bold">invaders</span> - Space Bug Invaders (Ok Tuşları + Space)</div>
-            <div>3. <span className="text-amber-400 font-bold">tictactoe</span> - XOX Strateji Oyunu (Tıklama)</div>
-            <div>4. <span className="text-amber-400 font-bold">hack</span> - Kripto Firewall Şifre Kırma</div>
-            <div className="text-zinc-400 pt-1">Oynamak için oyun adını yazın (örn: <span className="text-[#43D9C3]">hack</span>)</div>
+            <div>3. <span className="text-amber-400 font-bold">tictactoe</span> - XOX vs Bilgisayar (Tıklama)</div>
+            <div>4. <span className="text-amber-400 font-bold">hack</span> - Şifre Kırma</div>
+            <div className="text-zinc-400 pt-1">Oynamak için oyun adını yazın (örn: <span className="text-[#43D9C3]">tictactoe</span>)</div>
           </div>
         );
         responseType = 'info';
@@ -454,7 +509,7 @@ export const FloatingTerminal: React.FC = () => {
         break;
 
       case 'neofetch':
-        responseOutput = 'OS: EminOS v6.2 | Host: Firebase | Stack: React + Vite + TS';
+        responseOutput = 'OS: EminOS v6.3 | Host: Firebase | Stack: React + Vite + TS';
         responseType = 'ascii';
         break;
 
@@ -578,10 +633,10 @@ export const FloatingTerminal: React.FC = () => {
       onMouseEnter={() => { setIsHovered(true); setTimeout(() => inputRef.current?.focus(), 200); }}
       onMouseLeave={() => setIsHovered(false)}
       onClick={() => inputRef.current?.focus()}
-      className={`fixed z-9999 font-mono select-none border backdrop-blur-md ${
+      className={`hidden md:flex fixed z-9999 font-mono select-none border backdrop-blur-md ${
         isExpanded
-          ? 'transition-all duration-300 ease-out w-[94vw] max-w-2xl h-110 rounded-2xl bg-[#080A0F]/95 border-[#43D9C3]/70 shadow-2xl shadow-[#43D9C3]/25 opacity-100 flex flex-col'
-          : 'transition-[width,height,border-radius,background-color] duration-300 w-12 h-12 rounded-full bg-[#10141D]/90 border-white/10 shadow-lg shadow-black/40 cursor-pointer opacity-85 flex items-center justify-center overflow-hidden hover:border-[#43D9C3]/50'
+          ? 'transition-all duration-300 ease-out w-[94vw] max-w-2xl h-110 rounded-2xl bg-[#080A0F]/95 border-[#43D9C3]/70 shadow-2xl shadow-[#43D9C3]/25 opacity-100 flex-col'
+          : 'transition-[width,height,border-radius,background-color] duration-300 w-12 h-12 rounded-full bg-[#10141D]/90 border-white/10 shadow-lg shadow-black/40 cursor-pointer opacity-85 items-center justify-center overflow-hidden hover:border-[#43D9C3]/50'
       }`}
     >
       {!isExpanded && (
@@ -597,9 +652,9 @@ export const FloatingTerminal: React.FC = () => {
               <span className="w-3 h-3 rounded-full bg-rose-500/80 cursor-pointer" onClick={() => setIsHovered(false)} />
               <span className="w-3 h-3 rounded-full bg-amber-500/80" />
               <span className="w-3 h-3 rounded-full bg-[#43D9C3]/80" />
-              <span className="ml-2 text-xs text-[#9299A8]">emin@portfolio:~ (arcade)</span>
+              <span className="ml-2 text-xs text-[#9299A8]">emin@celebi:~</span>
             </div>
-            <span className="text-xs text-[#43D9C3] font-bold">game</span>
+            <span className="text-xs text-[#43D9C3] font-bold">terminal</span>
           </div>
 
           <div
