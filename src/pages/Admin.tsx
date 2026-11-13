@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 
 import { usePortfolio } from '../context/PortfolioContext';
@@ -219,17 +218,18 @@ export const Admin: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#080A0F] text-[#F5F7FA] pt-28 pb-20 px-6 font-sans">
+    <div className="min-h-screen bg-[#050C0A] text-white pt-28 pb-20 px-6 font-sans relative">
       <div className="max-w-6xl mx-auto">
 
         {/* Üst Bar */}
-        <div className="flex items-center justify-between mb-10 pb-6 border-b border-white/8">
+        <div className="flex items-center justify-between mb-10 pb-6 border-b border-emerald-500/15">
           <div>
-            <span className="text-xs font-mono text-[#43D9C3] uppercase tracking-widest block mb-1">
+            <span className="text-xs font-mono text-[#3CE8B5] uppercase tracking-widest block mb-1 items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#3CE8B5] animate-pulse"></span>
               ADMIN PANEL
             </span>
 
-            <h1 className="text-3xl font-bold tracking-tight">
+            <h1 className="text-3xl font-bold tracking-tight text-white">
               Portfolyo Yönetim Merkezi
             </h1>
           </div>
@@ -244,7 +244,7 @@ export const Admin: React.FC = () => {
 
             <a
               href="/"
-              className="text-xs font-mono bg-[#10141D] border border-white/8 hover:border-[#43D9C3]/50 px-4 py-2 rounded-xl transition-all"
+              className="text-xs font-mono bg-[#0B1915] border border-emerald-500/15 text-[#8FA8A0] hover:text-[#3CE8B5] hover:border-[#3CE8B5]/50 px-4 py-2 rounded-xl transition-all"
             >
               Siteye Dön
             </a>
@@ -252,14 +252,14 @@ export const Admin: React.FC = () => {
         </div>
 
         {/* Sekme Butonları */}
-        <div className="flex flex-wrap gap-3 mb-8 border-b border-white/8 pb-4">
+        <div className="flex flex-wrap gap-3 mb-8 border-b border-emerald-500/15 pb-4">
 
           <button
             onClick={() => setActiveTab('analytics')}
             className={`px-5 py-2.5 rounded-xl text-xs font-mono transition-all cursor-pointer ${
               activeTab === 'analytics'
-                ? 'bg-[#43D9C3] text-[#080A0F] font-bold'
-                : 'bg-[#10141D] text-[#9299A8]'
+                ? 'bg-[#3CE8B5] text-[#050C0A] font-bold shadow-md shadow-[#3CE8B5]/20'
+                : 'bg-[#0B1915] text-[#8FA8A0] border border-emerald-500/15 hover:text-white'
             }`}
           >
             📊 İstatistikler
@@ -269,8 +269,8 @@ export const Admin: React.FC = () => {
             onClick={() => setActiveTab('projects')}
             className={`px-5 py-2.5 rounded-xl text-xs font-mono transition-all cursor-pointer ${
               activeTab === 'projects'
-                ? 'bg-[#43D9C3] text-[#080A0F] font-bold'
-                : 'bg-[#10141D] text-[#9299A8]'
+                ? 'bg-[#3CE8B5] text-[#050C0A] font-bold shadow-md shadow-[#3CE8B5]/20'
+                : 'bg-[#0B1915] text-[#8FA8A0] border border-emerald-500/15 hover:text-white'
             }`}
           >
             🚀 Projeler
@@ -280,8 +280,8 @@ export const Admin: React.FC = () => {
             onClick={() => setActiveTab('messages')}
             className={`px-5 py-2.5 rounded-xl text-xs font-mono transition-all cursor-pointer ${
               activeTab === 'messages'
-                ? 'bg-[#43D9C3] text-[#080A0F] font-bold'
-                : 'bg-[#10141D] text-[#9299A8]'
+                ? 'bg-[#3CE8B5] text-[#050C0A] font-bold shadow-md shadow-[#3CE8B5]/20'
+                : 'bg-[#0B1915] text-[#8FA8A0] border border-emerald-500/15 hover:text-white'
             }`}
           >
             💬 Müşteri & İş Takibi ({messages.length})

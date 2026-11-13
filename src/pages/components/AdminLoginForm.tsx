@@ -30,51 +30,54 @@ export const LoginForm: React.FC<LoginFormProps> = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#080A0F] text-[#F5F7FA] flex items-center justify-center px-6 font-sans">
-      <div className="bg-[#10141D] border border-white/8 rounded-3xl p-8 max-w-md w-full shadow-2xl relative">
+    <div className="min-h-screen bg-[#050C0A] text-white flex items-center justify-center px-6 font-sans relative">
+      <div className="bg-[#0B1915]/80 backdrop-blur-xl border border-emerald-500/15 rounded-3xl p-8 max-w-md w-full shadow-2xl relative">
         <div className="text-center mb-8">
-          <div className="w-12 h-12 rounded-xl bg-[#10141D] border border-white/8 flex items-center justify-center font-mono font-bold text-[#43D9C3] mx-auto mb-4 text-lg">
+          <div className="w-12 h-12 rounded-xl bg-[#0B1915] border border-emerald-500/20 flex items-center justify-center font-mono font-bold text-[#3CE8B5] mx-auto mb-4 text-lg shadow-sm">
             🔐
           </div>
-          <span className="text-xs font-mono text-[#43D9C3] uppercase tracking-widest block mb-1">SECURE PORTAL</span>
-          <h1 className="text-2xl font-bold tracking-tight">Yönetici Girişi</h1>
-          <p className="text-xs text-[#9299A8] mt-1">Hesap bilgilerinizi girin.</p>
+          <span className="text-xs font-mono text-[#3CE8B5] uppercase tracking-widest block mb-1 items-center justify-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#3CE8B5] animate-pulse"></span>
+            SECURE PORTAL
+          </span>
+          <h1 className="text-2xl font-bold tracking-tight text-white">Yönetici Girişi</h1>
+          <p className="text-xs text-[#8FA8A0] mt-1">Hesap bilgilerinizi girin.</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-[11px] font-mono text-[#9299A8] mb-1.5">E-POSTA ADRESİ</label>
+            <label className="block text-[11px] font-mono text-[#8FA8A0] mb-1.5">E-POSTA ADRESİ</label>
             <input 
               type="email" 
-              placeholder="admin" 
+              placeholder="admin@example.com" 
               value={emailInput} 
               onChange={e => setEmailInput(e.target.value)} 
-              className="w-full bg-[#080A0F] border border-white/8 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#43D9C3]"
+              className="w-full bg-[#050C0A] border border-emerald-500/15 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#3CE8B5] transition-all"
               required
               autoFocus
             />
           </div>
           <div>
-            <label className="block text-[11px] font-mono text-[#9299A8] mb-1.5">ŞİFRE</label>
+            <label className="block text-[11px] font-mono text-[#8FA8A0] mb-1.5">ŞİFRE</label>
             <input 
               type="password" 
               placeholder="••••••••" 
               value={passwordInput} 
               onChange={e => setPasswordInput(e.target.value)} 
-              className="w-full bg-[#080A0F] border border-white/8 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#43D9C3]"
+              className="w-full bg-[#050C0A] border border-emerald-500/15 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#3CE8B5] transition-all"
               required
             />
           </div>
 
           {errorMsg && <p className="text-xs text-red-400 font-mono">{errorMsg}</p>}
 
-          <button type="submit" disabled={loading} className="w-full bg-[#43D9C3] text-[#080A0F] font-semibold py-3.5 rounded-xl text-xs font-mono cursor-pointer hover:bg-[#35b5a1] transition-all mt-2">
+          <button type="submit" disabled={loading} className="w-full bg-[#3CE8B5] text-[#050C0A] font-semibold py-3.5 rounded-xl text-xs font-mono cursor-pointer hover:bg-[#3CE8B5]/90 transition-all mt-2 shadow-lg shadow-[#3CE8B5]/10">
             {loading ? 'Giriş Yapılıyor...' : 'Sisteme Giriş Yap →'}
           </button>
         </form>
 
         <div className="mt-6 text-center">
-          <a href="/" className="text-xs font-mono text-[#9299A8] hover:text-[#43D9C3] transition-colors">
+          <a href="/" className="text-xs font-mono text-[#8FA8A0] hover:text-[#3CE8B5] transition-colors">
             ← Ana Sayfaya Geri Dön
           </a>
         </div>

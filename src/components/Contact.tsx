@@ -4,15 +4,15 @@ import { useLanguage } from '../context/LanguageContext';
 import { usePortfolio } from '../context/PortfolioContext';
 
 const STYLES = {
-  sectionContainer: "py-28 px-6 max-w-4xl mx-auto border-t border-white/8",
+  sectionContainer: "py-28 px-6 max-w-4xl mx-auto border-t border-emerald-500/10 relative",
   headerWrapper: "text-center mb-16",
-  sectionTag: "text-xs font-mono text-[#43D9C3] uppercase tracking-widest block mb-3",
-  sectionTitle: "text-4xl font-bold tracking-tight mb-4",
-  sectionSubtitle: "text-[#9299A8]",
-  formCard: "bg-[#10141D] border border-white/8 rounded-3xl p-8 sm:p-10",
-  inputField: "w-full bg-[#080A0F] border border-white/8 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#43D9C3]",
-  textAreaField: "w-full bg-[#080A0F] border border-white/8 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#43D9C3] resize-none",
-  submitButton: "w-full bg-[#43D9C3] text-[#080A0F] font-semibold py-4 rounded-xl text-sm cursor-pointer hover:bg-[#35b5a1] transition-all",
+  sectionTag: "text-xs font-mono text-[#3CE8B5] uppercase tracking-widest block mb-3 flex items-center justify-center gap-2",
+  sectionTitle: "text-4xl font-bold tracking-tight mb-4 text-white",
+  sectionSubtitle: "text-[#8FA8A0]",
+  formCard: "bg-[#0B1915]/80 backdrop-blur-xl border border-emerald-500/15 rounded-3xl p-8 sm:p-10 shadow-2xl",
+  inputField: "w-full bg-[#050C0A] border border-emerald-500/15 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#3CE8B5] transition-all",
+  textAreaField: "w-full bg-[#050C0A] border border-emerald-500/15 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#3CE8B5] resize-none transition-all",
+  submitButton: "w-full bg-[#3CE8B5] text-[#050C0A] font-semibold py-4 rounded-xl text-sm cursor-pointer hover:bg-[#3CE8B5]/90 transition-all shadow-lg shadow-[#3CE8B5]/10",
 };
 
 export const Contact: React.FC = () => {
@@ -53,7 +53,10 @@ export const Contact: React.FC = () => {
   return (
     <section id="contact" className={STYLES.sectionContainer}>
       <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className={STYLES.headerWrapper}>
-        <span className={STYLES.sectionTag}>{t('İLETİŞİM', 'CONTACT')}</span>
+        <span className={STYLES.sectionTag}>
+          <span className="w-2 h-2 rounded-full bg-[#3CE8B5] animate-pulse"></span>
+          {t('İLETİŞİM', 'CONTACT')}
+        </span>
         <h2 className={STYLES.sectionTitle}>{t('Harika Şeyler İnşa Edelim.', "Let's Build Something Great.")}</h2>
         <p className={STYLES.sectionSubtitle}>{t('Bir projeniz mi var? Bize mesaj gönderin.', 'Have an inquiry? Send a message directly to us.')}</p>
       </motion.div>
@@ -67,12 +70,12 @@ export const Contact: React.FC = () => {
           <textarea required rows={5} placeholder={t('Mesajınız...', 'Your Message...')} value={message} onChange={e => setMessage(e.target.value)} className={STYLES.textAreaField}></textarea>
           
           {/* KVKK Bilgilendirme Metni */}
-          <div className="text-xs text-[#9299A8] leading-relaxed pt-1">
+          <div className="text-xs text-[#8FA8A0] leading-relaxed pt-1">
             {t('Bu formu göndererek,', 'By submitting this form, you agree to our')}{' '}
             <button 
               type="button" 
               onClick={() => setIsModalOpen(true)}
-              className="text-[#43D9C3] underline hover:text-[#35b5a1] cursor-pointer font-medium"
+              className="text-[#3CE8B5] underline hover:text-[#3CE8B5]/80 cursor-pointer font-medium"
             >
               {t('KVKK Aydınlatma Metni', 'Privacy Policy')}
             </button>
@@ -94,19 +97,19 @@ export const Contact: React.FC = () => {
       {/* KVKK Modalı (Pop-up) */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-6">
-          <div className="bg-[#10141D] border border-white/10 rounded-3xl max-w-lg w-full p-8 space-y-6 shadow-2xl relative">
-            <div className="flex items-center justify-between border-b border-white/8 pb-4">
+          <div className="bg-[#0B1915] border border-emerald-500/20 rounded-3xl max-w-lg w-full p-8 space-y-6 shadow-2xl relative">
+            <div className="flex items-center justify-between border-b border-emerald-500/15 pb-4">
               <h3 className="text-lg font-bold text-white">KVKK Aydınlatma ve Gizlilik Metni</h3>
               <button 
                 type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="text-[#9299A8] hover:text-white font-mono text-sm cursor-pointer bg-white/5 px-3 py-1 rounded-xl"
+                className="text-[#8FA8A0] hover:text-white font-mono text-sm cursor-pointer bg-white/5 px-3 py-1 rounded-xl transition-colors"
               >
                 ✕ Kapat
               </button>
             </div>
 
-            <div className="space-y-4 text-xs text-[#9299A8] leading-relaxed max-h-87.5 overflow-y-auto pr-2">
+            <div className="space-y-4 text-xs text-[#8FA8A0] leading-relaxed max-h-87.5 overflow-y-auto pr-2 custom-scrollbar">
               <p>
                 <strong>1. Veri Sorumlusunun Kimliği:</strong> 6698 sayılı Kişisel Verilerin Korunması Kanunu (“KVKK”) uyarınca, kişisel verileriniz veri sorumlusu sıfatıyla portfolyo sahibi tarafından işlenmektedir.
               </p>
@@ -124,7 +127,7 @@ export const Contact: React.FC = () => {
             <button 
               type="button" 
               onClick={() => setIsModalOpen(false)}
-              className="w-full bg-[#43D9C3] text-[#080A0F] font-semibold py-3 rounded-xl text-xs font-mono cursor-pointer hover:bg-[#35b5a1] transition-all"
+              className="w-full bg-[#3CE8B5] text-[#050C0A] font-semibold py-3 rounded-xl text-xs font-mono cursor-pointer hover:bg-[#3CE8B5]/90 transition-all shadow-md"
             >
               Anladım / Kapat
             </button>

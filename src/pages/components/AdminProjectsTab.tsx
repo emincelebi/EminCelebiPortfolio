@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import {
   PRESET_CATEGORIES,
@@ -170,9 +169,10 @@ export const ProjectsTab: React.FC<ProjectsTabProps> = ({
     <div className="space-y-8">
 
       {/* Yeni Proje Formu */}
-      <div className="bg-[#10141D] border border-white/8 rounded-3xl p-8 space-y-6">
+      <div className="bg-[#0B1915]/80 backdrop-blur-xl border border-emerald-500/15 rounded-3xl p-8 space-y-6 shadow-2xl">
 
-        <h2 className="text-xl font-bold text-[#43D9C3]">
+        <h2 className="text-xl font-bold text-white flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-[#3CE8B5] animate-pulse"></span>
           Yeni Proje Ekle
         </h2>
 
@@ -182,7 +182,7 @@ export const ProjectsTab: React.FC<ProjectsTabProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
             <div>
-              <label className="block text-[11px] font-mono text-[#9299A8] mb-1.5">
+              <label className="block text-[11px] font-mono text-[#8FA8A0] mb-1.5">
                 PROJE ADI
               </label>
 
@@ -198,12 +198,12 @@ export const ProjectsTab: React.FC<ProjectsTabProps> = ({
                     title: e.target.value,
                   }))
                 }
-                className="w-full bg-[#080A0F] border border-white/8 rounded-xl px-4 py-3 text-sm text-white"
+                className="w-full bg-[#050C0A] border border-emerald-500/15 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#3CE8B5] transition-all"
               />
             </div>
 
             <div>
-              <label className="block text-[11px] font-mono text-[#9299A8] mb-1.5">
+              <label className="block text-[11px] font-mono text-[#8FA8A0] mb-1.5">
                 KATEGORİ
               </label>
 
@@ -216,7 +216,7 @@ export const ProjectsTab: React.FC<ProjectsTabProps> = ({
                   }))
                 }
                 required
-                className="w-full bg-[#080A0F] border border-white/8 rounded-xl px-4 py-3 text-sm text-white"
+                className="w-full bg-[#050C0A] border border-emerald-500/15 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#3CE8B5] transition-all"
               >
                 <option value="" disabled>
                   Kategori Seçin...
@@ -234,7 +234,7 @@ export const ProjectsTab: React.FC<ProjectsTabProps> = ({
 
           {/* Türkçe açıklama */}
           <div>
-            <label className="block text-[11px] font-mono text-[#9299A8] mb-1.5">
+            <label className="block text-[11px] font-mono text-[#8FA8A0] mb-1.5">
               AÇIKLAMA (TÜRKÇE)
             </label>
 
@@ -250,13 +250,13 @@ export const ProjectsTab: React.FC<ProjectsTabProps> = ({
                   descriptionTr: e.target.value,
                 }))
               }
-              className="w-full bg-[#080A0F] border border-white/8 rounded-xl px-4 py-3 text-sm text-white resize-none"
+              className="w-full bg-[#050C0A] border border-emerald-500/15 rounded-xl px-4 py-3 text-sm text-white resize-none focus:outline-none focus:border-[#3CE8B5] transition-all"
             />
           </div>
 
           {/* İngilizce açıklama */}
           <div>
-            <label className="block text-[11px] font-mono text-[#9299A8] mb-1.5">
+            <label className="block text-[11px] font-mono text-[#8FA8A0] mb-1.5">
               DESCRIPTION (ENGLISH)
             </label>
 
@@ -272,14 +272,14 @@ export const ProjectsTab: React.FC<ProjectsTabProps> = ({
                   descriptionEn: e.target.value,
                 }))
               }
-              className="w-full bg-[#080A0F] border border-white/8 rounded-xl px-4 py-3 text-sm text-white resize-none"
+              className="w-full bg-[#050C0A] border border-emerald-500/15 rounded-xl px-4 py-3 text-sm text-white resize-none focus:outline-none focus:border-[#3CE8B5] transition-all"
             />
           </div>
 
           {/* Teknolojiler */}
-          <div className="space-y-3 pt-4 border-t border-white/8">
+          <div className="space-y-3 pt-4 border-t border-emerald-500/15">
 
-            <label className="block text-[11px] font-mono text-[#43D9C3] uppercase tracking-wider">
+            <label className="block text-[11px] font-mono text-[#3CE8B5] uppercase tracking-wider">
               KULLANILAN TEKNOLOJİLER
             </label>
 
@@ -295,8 +295,8 @@ export const ProjectsTab: React.FC<ProjectsTabProps> = ({
                     onClick={() => handleToggleTech(tech)}
                     className={`text-xs font-mono px-3 py-1.5 rounded-xl border transition-all cursor-pointer ${
                       isSelected
-                        ? 'bg-[#43D9C3] text-[#080A0F] border-[#43D9C3] font-bold'
-                        : 'bg-[#080A0F] text-[#9299A8] border-white/8 hover:border-white/20'
+                        ? 'bg-[#3CE8B5] text-[#050C0A] border-[#3CE8B5] font-bold shadow-sm'
+                        : 'bg-[#050C0A] text-[#8FA8A0] border-emerald-500/15 hover:border-[#3CE8B5]/50'
                     }`}
                   >
                     {isSelected ? `✓ ${tech}` : `+ ${tech}`}
@@ -315,15 +315,15 @@ export const ProjectsTab: React.FC<ProjectsTabProps> = ({
                   techStackInput: e.target.value,
                 }))
               }
-              className="w-full bg-[#080A0F] border border-white/8 rounded-xl px-4 py-3 text-sm text-white"
+              className="w-full bg-[#050C0A] border border-emerald-500/15 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#3CE8B5] transition-all"
             />
           </div>
 
           {/* Proje bağlantıları */}
-          <div className="space-y-3 pt-4 border-t border-white/8">
+          <div className="space-y-3 pt-4 border-t border-emerald-500/15">
 
             <div className="flex items-center justify-between">
-              <label className="text-xs font-mono text-[#43D9C3] uppercase tracking-wider">
+              <label className="text-xs font-mono text-[#3CE8B5] uppercase tracking-wider">
                 PROJE BAĞLANTILARI
               </label>
 
@@ -331,7 +331,7 @@ export const ProjectsTab: React.FC<ProjectsTabProps> = ({
                 type="button"
                 disabled={isSubmitting}
                 onClick={handleAddLinkRow}
-                className="text-xs font-mono bg-[#43D9C3]/10 text-[#43D9C3] border border-[#43D9C3]/30 px-3 py-1.5 rounded-xl"
+                className="text-xs font-mono bg-[#3CE8B5]/10 text-[#3CE8B5] border border-[#3CE8B5]/30 px-3 py-1.5 rounded-xl cursor-pointer hover:bg-[#3CE8B5]/20 transition-all"
               >
                 + Link Ekle
               </button>
@@ -340,7 +340,7 @@ export const ProjectsTab: React.FC<ProjectsTabProps> = ({
             {linksList.map((item, index) => (
               <div
                 key={index}
-                className="flex flex-col sm:flex-row gap-3 items-center bg-[#080A0F] p-4 rounded-2xl border border-white/8"
+                className="flex flex-col sm:flex-row gap-3 items-center bg-[#050C0A] p-4 rounded-2xl border border-emerald-500/15"
               >
                 <input
                   type="url"
@@ -349,7 +349,7 @@ export const ProjectsTab: React.FC<ProjectsTabProps> = ({
                   onChange={(e) =>
                     handleLinkRowChange(index, 'url', e.target.value)
                   }
-                  className="w-full bg-[#10141D] border border-white/8 rounded-xl px-4 py-2.5 text-xs text-white"
+                  className="w-full bg-[#0B1915] border border-emerald-500/15 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-[#3CE8B5] transition-all"
                 />
 
                 <input
@@ -359,7 +359,7 @@ export const ProjectsTab: React.FC<ProjectsTabProps> = ({
                   onChange={(e) =>
                     handleLinkRowChange(index, 'label', e.target.value)
                   }
-                  className="w-full bg-[#10141D] border border-white/8 rounded-xl px-4 py-2.5 text-xs text-white"
+                  className="w-full bg-[#0B1915] border border-emerald-500/15 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-[#3CE8B5] transition-all"
                 />
 
                 {linksList.length > 1 && (
@@ -367,7 +367,7 @@ export const ProjectsTab: React.FC<ProjectsTabProps> = ({
                     type="button"
                     disabled={isSubmitting}
                     onClick={() => handleRemoveLinkRow(index)}
-                    className="bg-red-500/10 text-red-400 border border-red-500/20 px-3 py-2.5 rounded-xl text-xs w-full sm:w-auto"
+                    className="bg-red-500/10 text-red-400 border border-red-500/20 px-3 py-2.5 rounded-xl text-xs w-full sm:w-auto cursor-pointer hover:bg-red-500/20 transition-all"
                   >
                     Sil
                   </button>
@@ -378,7 +378,7 @@ export const ProjectsTab: React.FC<ProjectsTabProps> = ({
 
           {/* Hata mesajı */}
           {error && (
-            <div className="bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl p-4 text-sm">
+            <div className="bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl p-4 text-sm font-mono">
               {error}
             </div>
           )}
@@ -387,7 +387,7 @@ export const ProjectsTab: React.FC<ProjectsTabProps> = ({
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full bg-[#43D9C3] text-[#080A0F] font-semibold py-4 rounded-xl text-xs font-mono disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-[#3CE8B5] text-[#050C0A] font-semibold py-4 rounded-xl text-xs font-mono cursor-pointer hover:bg-[#3CE8B5]/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-[#3CE8B5]/10"
           >
             {isSubmitting
               ? 'Kaydediliyor...'
@@ -400,34 +400,35 @@ export const ProjectsTab: React.FC<ProjectsTabProps> = ({
       {/* Mevcut projeler */}
       <div className="space-y-4">
 
-        <h3 className="text-lg font-bold">
+        <h3 className="text-lg font-bold text-white flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-[#3CE8B5]"></span>
           Mevcut Projeler ({projects.length})
         </h3>
 
         {projects.length === 0 ? (
-          <div className="bg-[#10141D] border border-white/8 rounded-2xl p-8 text-center text-[#9299A8]">
+          <div className="bg-[#0B1915]/85 backdrop-blur-xl border border-emerald-500/15 rounded-3xl p-12 text-center text-[#8FA8A0] font-mono text-xs">
             Henüz eklenmiş bir proje bulunmuyor.
           </div>
         ) : (
           projects.map((project) => (
             <div
               key={project.id}
-              className="bg-[#10141D] border border-white/8 rounded-2xl p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+              className="bg-[#0B1915]/80 backdrop-blur-xl border border-emerald-500/15 rounded-3xl p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xl"
             >
               <div>
                 <h4 className="font-bold text-base text-white">
                   {project.title}
                 </h4>
 
-                <span className="text-xs font-mono text-[#43D9C3] block mb-2">
+                <span className="text-xs font-mono text-[#3CE8B5] block mb-2">
                   {project.category}
                 </span>
 
-                <div className="flex flex-wrap gap-2 mb-2">
+                <div className="flex flex-wrap gap-2 mb-3">
                   {project.techStack?.map((tech) => (
                     <span
                       key={tech}
-                      className="text-[10px] text-[#9299A8] bg-[#080A0F] px-2 py-1 rounded"
+                      className="text-[10px] text-white bg-[#050C0A] border border-emerald-500/15 px-2.5 py-1 rounded-md font-mono"
                     >
                       {tech}
                     </span>
@@ -442,7 +443,7 @@ export const ProjectsTab: React.FC<ProjectsTabProps> = ({
                         href={link.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-[11px] font-mono bg-[#080A0F] border border-white/8 text-[#7C83FF] px-3 py-1 rounded-lg"
+                        className="text-[11px] font-mono bg-[#050C0A] border border-emerald-500/15 text-[#3CE8B5] px-3 py-1.5 rounded-xl hover:border-[#3CE8B5]/50 transition-all flex items-center gap-1"
                       >
                         🔗 {link.label || 'Link'} ↗
                       </a>
@@ -452,7 +453,7 @@ export const ProjectsTab: React.FC<ProjectsTabProps> = ({
                       href={project.projectUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-[11px] font-mono bg-[#080A0F] border border-white/8 text-[#7C83FF] px-3 py-1 rounded-lg"
+                      className="text-[11px] font-mono bg-[#050C0A] border border-emerald-500/15 text-[#3CE8B5] px-3 py-1.5 rounded-xl hover:border-[#3CE8B5]/50 transition-all flex items-center gap-1"
                     >
                       🔗 {project.urlLabel || 'Bağlantı'} ↗
                     </a>
@@ -463,7 +464,7 @@ export const ProjectsTab: React.FC<ProjectsTabProps> = ({
               <button
                 disabled={deletingId !== null}
                 onClick={() => handleDelete(project)}
-                className="bg-red-500/10 text-red-400 border border-red-500/20 px-4 py-2 rounded-xl text-xs font-mono disabled:opacity-50 self-start sm:self-center"
+                className="bg-red-500/10 text-red-400 border border-red-500/20 px-4 py-2.5 rounded-xl text-xs font-mono disabled:opacity-50 self-start sm:self-center cursor-pointer hover:bg-red-500/20 transition-all"
               >
                 {deletingId === project.id ? 'Siliniyor...' : 'Sil'}
               </button>

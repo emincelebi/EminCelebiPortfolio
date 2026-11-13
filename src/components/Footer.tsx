@@ -2,10 +2,10 @@ import React from 'react';
 import { useLanguage } from '../context/LanguageContext';
 
 const STYLES = {
-  footerContainer: "border-t border-white/8 py-12 px-6 max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6 text-xs font-mono text-[#9299A8]",
+  footerContainer: "border-t border-emerald-500/10 py-12 px-6 max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6 text-xs font-mono text-[#8FA8A0]",
   socialWrapper: "flex items-center gap-6",
-  socialLink: "hover:text-[#43D9C3] transition-colors",
-  highlightText: "text-[#43D9C3]",
+  socialLink: "hover:text-[#3CE8B5] transition-colors",
+  highlightText: "text-[#3CE8B5]",
 };
 
 const I18N_TEXTS = {
@@ -29,7 +29,7 @@ export const Footer: React.FC = () => {
   return (
     <footer className={STYLES.footerContainer}>
       <div>
-        &copy; {new Date().getFullYear()} Muhammet Emin Çelebi. {t(I18N_TEXTS.rights.tr, I18N_TEXTS.rights.en)}
+        © {new Date().getFullYear()} Muhammet Emin Çelebi. {t(I18N_TEXTS.rights.tr, I18N_TEXTS.rights.en)}
       </div>
       <div className={STYLES.socialWrapper}>
         <a href="https://github.com/emincelebi" target="_blank" rel="noreferrer" className={STYLES.socialLink}>
