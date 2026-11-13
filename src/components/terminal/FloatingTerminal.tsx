@@ -29,11 +29,26 @@ export const FloatingTerminal: React.FC = () => {
   const [snakeScore, setSnakeScore] = useState(0);
   const [snakeGameOver, setSnakeGameOver] = useState(false);
 
+  // Dalga ve Boss Sistemli Invaders State'leri
   const [shipX, setShipX] = useState(11);
   const [bullets, setBullets] = useState<{ x: number; y: number }[]>([]);
-  const [enemies, setEnemies] = useState<{ x: number; y: number }[]>([]);
+  const [enemies, setEnemies] = useState<{ x: number; y: number; type: number; hp: number }[]>([]);
+  const [enemyBullets, setEnemyBullets] = useState<{ x: number; y: number }[]>([]);
+  const [powerups, setPowerups] = useState<{ x: number; y: number; type: 'triple' | 'rapid' }[]>([]);
+  const [activeBuff, setActiveBuff] = useState<'none' | 'triple' | 'rapid'>('none');
   const [invadersScore, setInvadersScore] = useState(0);
   const [invadersOver, setInvadersOver] = useState(false);
+  const [invadersWon, setInvadersWon] = useState(false);
+
+  // Dalga Yönetimi
+  const [wave, setWave] = useState(1);
+  const [waveKills, setWaveKills] = useState(0);
+  const [spawnedInWave, setSpawnedInWave] = useState(0);
+
+  const getWaveQuota = (w: number) => {
+    if (w === 10) return 1; // Boss
+    return 4 + w * 2; // Dalga başına düşman sayısı
+  };
 
   const [tttBoard, setTttBoard] = useState<string[]>(Array(9).fill(''));
   const [tttTurn, setTttTurn] = useState<'X' | 'O'>('X');
@@ -147,24 +162,55 @@ export const FloatingTerminal: React.FC = () => {
     return () => clearInterval(interval);
   }, [activeGame, snakeDir, foodPos, snakeGameOver]);
 
+  // Dalga Tabanlı Invaders Oyun Motoru
   useEffect(() => {
-    if (activeGame !== 'invaders' || invadersOver) return;
+    if (activeGame !== 'invaders' || invadersOver || invadersWon) return;
 
     let tick = 0;
     const interval = setInterval(() => {
       tick += 1;
 
+      // Oyuncu mermileri
+      const bulletSpeed = activeBuff === 'rapid' ? 2 : 1;
       setBullets((prevB) =>
-        prevB.map((b) => ({ x: b.x, y: b.y - 1 })).filter((b) => b.y >= 0)
+        prevB.map((b) => ({ x: b.x, y: b.y - bulletSpeed })).filter((b) => b.y >= 0)
       );
 
+      // Düşman mermileri
+      setEnemyBullets((prevEB) =>
+        prevEB.map((eb) => ({ ...eb, y: eb.y + 1 })).filter((eb) => eb.y < GRID_H)
+      );
+
+      // Güçlendirmeler
+      setPowerups((prevP) =>
+        prevP.map((p) => ({ ...p, y: p.y + 1 })).filter((p) => p.y < GRID_H)
+      );
+
+      // Düşman Hareketi & Dalga Kontrolü
       setEnemies((prevE) => {
-        let updated = prevE;
-        if (tick % 3 === 0) {
-          updated = prevE.map((e) => ({ x: e.x, y: e.y + 1 }));
-        }
-        if (tick % 6 === 0) {
-          updated = [...updated, { x: Math.floor(Math.random() * GRID_W), y: 0 }];
+        let updated = prevE.map((e) => {
+          const moveSpeed = wave >= 7 ? 3 : 4;
+          const step = (e.type === 2 && tick % 2 === 0) ? 1 : (e.type === 5 ? (tick % 2 === 0 ? 1 : 0) : (tick % moveSpeed === 0 ? 1 : 0));
+          return { ...e, y: e.y + step };
+        });
+
+        const quota = getWaveQuota(wave);
+
+        if (updated.length < (wave === 10 ? 1 : 3) && spawnedInWave < quota) {
+          if (wave === 10) {
+            updated.push({ x: Math.floor(GRID_W / 2), y: 0, type: 5, hp: 20 });
+            setSpawnedInWave((s) => s + 1);
+          } else {
+            const randType = Math.random();
+            let type = 1;
+            let hp = 1;
+            if (wave >= 4 && randType > 0.7) { type = 4; hp = 1; }
+            else if (wave >= 3 && randType > 0.4) { type = 3; hp = wave >= 6 ? 2 : 1; }
+            else if (wave >= 2 && randType > 0.2) { type = 2; hp = 1; }
+
+            updated.push({ x: Math.floor(Math.random() * GRID_W), y: 0, type, hp });
+            setSpawnedInWave((s) => s + 1);
+          }
         }
 
         if (updated.some((e) => e.y >= GRID_H - 1)) {
@@ -173,34 +219,101 @@ export const FloatingTerminal: React.FC = () => {
         return updated;
       });
 
+      // Düşmanların Ateş Etme Sıklığı
+      setEnemies((currE) => {
+        const fireChance = 0.05 + wave * 0.015;
+        if (currE.length > 0 && Math.random() < fireChance) {
+          const shooter = currE[Math.floor(Math.random() * currE.length)];
+          setEnemyBullets((prev) => [...prev, { x: shooter.x, y: shooter.y + 1 }]);
+          if (shooter.type === 5) {
+            setEnemyBullets((prev) => [
+              ...prev, 
+              { x: Math.max(0, shooter.x - 1), y: shooter.y + 1 },
+              { x: Math.min(GRID_W - 1, shooter.x + 1), y: shooter.y + 1 }
+            ]);
+          }
+        }
+        return currE;
+      });
+
+      // Çarpışma Kontrolü: Oyuncu Mermisi -> Düşman
       setBullets((currB) => {
         setEnemies((currE) => {
-          const hitEnemyIndices = new Set<number>();
-          const hitBulletIndices = new Set<number>();
+          const hitBullets = new Set<number>();
+          const damagedEnemies = [...currE];
 
           currB.forEach((b, bIdx) => {
-            currE.forEach((e, eIdx) => {
+            damagedEnemies.forEach((e, eIdx) => {
               if (b.x === e.x && Math.abs(b.y - e.y) <= 1) {
-                hitEnemyIndices.add(eIdx);
-                hitBulletIndices.add(bIdx);
+                hitBullets.add(bIdx);
+                e.hp -= 1;
+                if (e.hp <= 0) {
+                  const scoreAdd = e.type === 5 ? 200 : (e.type === 3 ? 30 : 15);
+                  setInvadersScore((s) => s + scoreAdd);
+                  setWaveKills((k) => {
+                    const newKills = k + 1;
+                    if (newKills >= getWaveQuota(wave)) {
+                      if (wave >= 10) {
+                        setInvadersWon(true);
+                      } else {
+                        setWave((w) => w + 1);
+                        setSpawnedInWave(0);
+                        return 0;
+                      }
+                    }
+                    return newKills;
+                  });
+
+                  if (Math.random() < 0.35) {
+                    setPowerups((p) => [...p, { x: e.x, y: e.y, type: Math.random() > 0.5 ? 'triple' : 'rapid' }]);
+                  }
+                }
               }
             });
           });
 
-          if (hitEnemyIndices.size > 0) {
-            setInvadersScore((s) => s + hitEnemyIndices.size * 15);
-            return currE.filter((_, idx) => !hitEnemyIndices.has(idx));
-          }
-          return currE;
+          return damagedEnemies.filter((e) => e.hp > 0);
         });
         return currB;
       });
-    }, 140);
+
+      // Güçlendirme Toplama
+      setPowerups((currP) => {
+        return currP.filter((p) => {
+          if (p.y === GRID_H - 1 && p.x === shipX) {
+            setActiveBuff(p.type);
+            setTimeout(() => setActiveBuff('none'), 8000);
+            return false;
+          }
+          return true;
+        });
+      });
+
+      // Çarpışma Kontrolü: Düşman Mermisi -> Oyuncu
+      setEnemyBullets((currEB) => {
+        currEB.forEach((eb) => {
+          if (eb.y === GRID_H - 1 && eb.x === shipX) {
+            setInvadersOver(true);
+          }
+        });
+        return currEB;
+      });
+
+      setEnemies((currE) => {
+        currE.forEach((e) => {
+          if (e.y === GRID_H - 1 && e.x === shipX) {
+            setInvadersOver(true);
+          }
+        });
+        return currE;
+      });
+
+    }, 130);
 
     return () => clearInterval(interval);
-  }, [activeGame, invadersOver]);
+  }, [activeGame, invadersOver, invadersWon, shipX, activeBuff, wave, spawnedInWave]);
 
-  // Bilgisayar Hamlesi (XOX AI)
+  // XOX Bilgisayar Hamlesi
   useEffect(() => {
     if (activeGame !== 'tictactoe' || tttTurn !== 'O' || tttWinner) return;
 
@@ -213,7 +326,6 @@ export const FloatingTerminal: React.FC = () => {
 
       let moveIdx = -1;
 
-      // 1. Bilgisayar kazanabiliyorsa hamle yap
       for (let idx of emptyIndices) {
         const testBoard = [...tttBoard];
         testBoard[idx] = 'O';
@@ -223,7 +335,6 @@ export const FloatingTerminal: React.FC = () => {
         }
       }
 
-      // 2. Oyuncu kazanacaksa engelle
       if (moveIdx === -1) {
         for (let idx of emptyIndices) {
           const testBoard = [...tttBoard];
@@ -235,7 +346,6 @@ export const FloatingTerminal: React.FC = () => {
         }
       }
 
-      // 3. Rastgele boş bir yere oyna
       if (moveIdx === -1) {
         moveIdx = emptyIndices[Math.floor(Math.random() * emptyIndices.length)];
       }
@@ -267,9 +377,20 @@ export const FloatingTerminal: React.FC = () => {
   const startInvadersGame = () => {
     setShipX(11);
     setBullets([]);
-    setEnemies([{ x: 5, y: 0 }, { x: 12, y: 1 }, { x: 18, y: 0 }]);
+    setEnemyBullets([]);
+    setPowerups([]);
+    setActiveBuff('none');
+    setWave(1);
+    setWaveKills(0);
+    setSpawnedInWave(2);
     setInvadersScore(0);
     setInvadersOver(false);
+    setInvadersWon(false);
+    
+    setEnemies([
+      { x: 5, y: 0, type: 1, hp: 1 },
+      { x: 15, y: 0, type: 1, hp: 1 }
+    ]);
     setActiveGame('invaders');
   };
 
@@ -405,20 +526,20 @@ export const FloatingTerminal: React.FC = () => {
           <div className="space-y-2 text-xs py-1">
             <div className="text-[#43D9C3] font-bold border-b border-white/10 pb-1">📂 Navigasyon & Sistem</div>
             <div className="grid grid-cols-2 gap-1 text-zinc-300">
-              <div><span className="text-[#43D9C3]">about</span> - Hakkımda</div>
-              <div><span className="text-[#43D9C3]">skills</span> - Yetenekler</div>
-              <div><span className="text-[#43D9C3]">projects</span> - Projeler</div>
-              <div><span className="text-[#43D9C3]">contact</span> - İletişim</div>
-              <div><span className="text-[#43D9C3]">neofetch</span> - Sistem özeti</div>
-              <div><span className="text-[#43D9C3]">stack</span> - Teknoloji mimarisi</div>
+              <div><span className="text-[#43D9C3]">about</span> Hakkımda</div>
+              <div><span className="text-[#43D9C3]">skills</span> Yetenekler</div>
+              <div><span className="text-[#43D9C3]">projects</span> Projeler</div>
+              <div><span className="text-[#43D9C3]">contact</span> İletişim</div>
+              <div><span className="text-[#43D9C3]">neofetch</span> Sistem özeti</div>
+              <div><span className="text-[#43D9C3]">stack</span> Teknoloji mimarisi</div>
             </div>
 
             <div className="text-[#43D9C3] font-bold border-b border-white/10 pb-1 pt-1">🎮 Arcade Oyun Salonu</div>
             <div className="grid grid-cols-2 gap-1 text-zinc-300">
-              <div><span className="text-amber-400">snake</span> - Retro Yılan</div>
-              <div><span className="text-amber-400">invaders</span> - Bug Savunması</div>
-              <div><span className="text-amber-400">tictactoe</span> - XOX Oyunu</div>
-              <div><span className="text-amber-400">hack</span> - Şifre Kırma</div>
+              <div><span className="text-amber-400">snake</span> Retro Yılan</div>
+              <div><span className="text-amber-400">invaders</span> Bug Savunması</div>
+              <div><span className="text-amber-400">tictactoe</span> XOX Oyunu</div>
+              <div><span className="text-amber-400">hack</span> Şifre Kırma</div>
             </div>
           </div>
         );
@@ -430,10 +551,10 @@ export const FloatingTerminal: React.FC = () => {
         responseOutput = (
           <div className="space-y-1.5 text-xs py-1">
             <div className="text-[#43D9C3] font-bold">🎮 EMINOS ARCADE - OYUN SEÇİN:</div>
-            <div>1. <span className="text-amber-400 font-bold">snake</span> - Retro Yılan Oyunu (Ok Tuşları)</div>
-            <div>2. <span className="text-amber-400 font-bold">invaders</span> - Space Bug Invaders (Ok Tuşları + Space)</div>
-            <div>3. <span className="text-amber-400 font-bold">tictactoe</span> - XOX vs Bilgisayar (Tıklama)</div>
-            <div>4. <span className="text-amber-400 font-bold">hack</span> - Şifre Kırma</div>
+            <div>1. <span className="text-amber-400 font-bold">snake</span> Retro Yılan Oyunu (Ok Tuşları)</div>
+            <div>2. <span className="text-amber-400 font-bold">invaders</span> Space Bug Invaders (Ok Tuşları + Space)</div>
+            <div>3. <span className="text-amber-400 font-bold">tictactoe</span> XOX vs Bilgisayar (Tıklama)</div>
+            <div>4. <span className="text-amber-400 font-bold">hack</span> Şifre Kırma</div>
             <div className="text-zinc-400 pt-1">Oynamak için oyun adını yazın (örn: <span className="text-[#43D9C3]">tictactoe</span>)</div>
           </div>
         );
@@ -566,7 +687,16 @@ export const FloatingTerminal: React.FC = () => {
         setShipX((x) => Math.min(GRID_W - 1, x + 1));
       } else if (e.key === ' ') {
         e.preventDefault();
-        setBullets((prev) => [...prev, { x: shipX, y: GRID_H - 2 }]);
+        if (activeBuff === 'triple') {
+          setBullets((prev) => [
+            ...prev,
+            { x: shipX, y: GRID_H - 2 },
+            { x: Math.max(0, shipX - 1), y: GRID_H - 2 },
+            { x: Math.min(GRID_W - 1, shipX + 1), y: GRID_H - 2 }
+          ]);
+        } else {
+          setBullets((prev) => [...prev, { x: shipX, y: GRID_H - 2 }]);
+        }
       }
       return;
     }
@@ -604,12 +734,24 @@ export const FloatingTerminal: React.FC = () => {
       for (let x = 0; x < GRID_W; x++) {
         const isShip = y === GRID_H - 1 && x === shipX;
         const isBullet = bullets.some((b) => b.x === x && b.y === y);
-        const isEnemy = enemies.some((e) => e.x === x && e.y === y);
+        const isEnemyBullet = enemyBullets.some((eb) => eb.x === x && eb.y === y);
+        const enemy = enemies.find((e) => e.x === x && e.y === y);
+        const powerup = powerups.find((p) => p.x === x && p.y === y);
 
         if (isShip) line += '▲ ';
         else if (isBullet) line += '│ ';
-        else if (isEnemy) line += '👾';
-        else line += '· ';
+        else if (isEnemyBullet) line += '↓ ';
+        else if (powerup) {
+          line += powerup.type === 'rapid' ? '⚡' : '🔱';
+        } else if (enemy) {
+          if (enemy.type === 1) line += '👾';
+          else if (enemy.type === 2) line += '🛸';
+          else if (enemy.type === 3) line += '🦾';
+          else if (enemy.type === 4) line += '🤖';
+          else if (enemy.type === 5) line += '👹'; // BOSS
+        } else {
+          line += '· ';
+        }
       }
       rows.push(<div key={y} className="leading-none tracking-widest">{line}</div>);
     }
@@ -654,7 +796,14 @@ export const FloatingTerminal: React.FC = () => {
               <span className="w-3 h-3 rounded-full bg-[#43D9C3]/80" />
               <span className="ml-2 text-xs text-[#9299A8]">emin@celebi:~</span>
             </div>
-            <span className="text-xs text-[#43D9C3] font-bold">terminal</span>
+            <div className="flex items-center gap-2">
+              {activeBuff !== 'none' && (
+                <span className="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full border border-amber-500/40 animate-pulse">
+                  BUFF: {activeBuff === 'triple' ? '🔱 ÜÇLÜ ATIŞ' : '⚡ HIZLI MERMİ'}
+                </span>
+              )}
+              <span className="text-xs text-[#43D9C3] font-bold">terminal</span>
+            </div>
           </div>
 
           <div
@@ -666,7 +815,30 @@ export const FloatingTerminal: React.FC = () => {
             )}
 
             {activeGame === 'invaders' && (
-              <InvadersGame score={invadersScore} gameOver={invadersOver} renderBoard={renderInvadersBoard} />
+              <div className="flex flex-col items-center justify-center h-full space-y-2">
+                <div className="flex items-center justify-between w-full max-w-md px-2 text-[#43D9C3] font-bold text-xs">
+                  <span className="text-amber-400">
+                    {wave === 10 ? '👹 10. DALGA - BOSS SAVAŞI!' : `🌊 ${wave}. DALGA (Toplam 10 Dalga)`}
+                  </span>
+                  <span>SKOR: {invadersScore}</span>
+                </div>
+                <div className="p-3 rounded-xl bg-[#10141D] border border-[#43D9C3]/40 text-[#43D9C3] font-mono text-xs">
+                  {renderInvadersBoard()}
+                </div>
+                {invadersOver ? (
+                  <div className="text-center space-y-1">
+                    <div className="text-rose-400 font-bold">💥 OYUN BİTTİ! ({wave}. Dalga'da elendin) Skor: {invadersScore}</div>
+                    <div className="text-zinc-400 text-[11px]">Tekrar: <span className="text-[#43D9C3]">restart</span> • Çıkış: <span className="text-[#43D9C3]">exit</span></div>
+                  </div>
+                ) : invadersWon ? (
+                  <div className="text-center space-y-1">
+                    <div className="text-amber-400 font-bold">🎉 TEBRİKLER! 10 DALGAYI GEÇTİN VE BOSS'U YENDİN! Skor: {invadersScore}</div>
+                    <div className="text-zinc-400 text-[11px]">Yeniden Oyna: <span className="text-[#43D9C3]">restart</span> • Çıkış: <span className="text-[#43D9C3]">exit</span></div>
+                  </div>
+                ) : (
+                  <div className="text-zinc-400 text-[11px]">← → hareket et • SPACE ateş et • Çıkış: <span className="text-[#43D9C3]">exit</span></div>
+                )}
+              </div>
             )}
 
             {activeGame === 'tictactoe' && (

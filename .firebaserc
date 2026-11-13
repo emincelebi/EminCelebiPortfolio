@@ -1,5 +1,7 @@
 {
   "projects": {
     "default": "portfolio-backend-28c25"
-  }
+  },
+  "targets": {},
+  "etags": {}
 }
