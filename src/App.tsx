@@ -10,6 +10,7 @@ import { Articles } from './components/Articles';
 import { Contact } from './components/Contact';
 import { Footer } from './components/Footer';
 import { Admin } from './pages/Admin';
+import { FloatingTerminal } from './components/terminal/FloatingTerminal';
 
 export function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
@@ -35,6 +36,7 @@ export function App() {
               <Projects />
               <Articles />
               <Contact />
+              <FloatingTerminal />
             </main>
             <Footer />
           </div>
