@@ -13,10 +13,10 @@ import {
   updateDoc,
   increment,
   collection,
-  addDoc,
   getDocs,
   orderBy,
   query,
+  addDoc,
 } from 'firebase/firestore';
 
 import { db } from '../firebase';
@@ -50,6 +50,7 @@ export interface VisitorItem {
   os: string;
   screenResolution: string;
   visitedAt: string;
+  visitCount?: number;
 }
 
 export interface PortfolioData {
@@ -280,11 +281,22 @@ export const PortfolioProvider: React.FC<{
 
             await updateDoc(portfolioRef, updatePayload);
 
-            // Ziyaretçi detaylarını 'visitors' koleksiyonuna ekle
-            await addDoc(collection(db, VISITORS_COLLECTION), {
-              ...visitorInfo,
-              visitedAt: lastVisit,
-            });
+            // Cihaz adına benzersiz bir ID oluştur (Örn: windows_google_chrome_1920x1080)
+            const deviceKey = `${visitorInfo.os}_${visitorInfo.browser}_${visitorInfo.screenResolution}`
+              .toLowerCase()
+              .replace(/[^a-z0-9]/g, '_');
+
+            // Aynı cihaz daha önce kayıtlıysa üzerine yazar (visitedAt güncellenir, tekrar oluşmaz)
+            const visitorDocRef = doc(db, VISITORS_COLLECTION, deviceKey);
+            await setDoc(
+              visitorDocRef,
+              {
+                ...visitorInfo,
+                visitedAt: lastVisit,
+                visitCount: increment(1),
+              },
+              { merge: true }
+            );
 
             if (isMounted) {
               setData((prev) => {
@@ -508,6 +520,7 @@ export const PortfolioProvider: React.FC<{
               os: d.os || 'Bilinmiyor',
               screenResolution: d.screenResolution || '-',
               visitedAt: d.visitedAt || new Date().toISOString(),
+              visitCount: d.visitCount || 1,
             };
           });
 
