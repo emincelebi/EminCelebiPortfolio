@@ -1,4 +1,3 @@
-
 import React, {
   createContext,
   useContext,
@@ -64,6 +63,7 @@ export interface PortfolioData {
 
   analytics: {
     total_visits: number;
+    unique_visitors: number;
     contact_submissions: number;
     last_visit: string;
   };
@@ -141,6 +141,7 @@ const DEFAULT_DATA: PortfolioData = {
 
   analytics: {
     total_visits: 0,
+    unique_visitors: 0,
     contact_submissions: 0,
     last_visit: new Date().toISOString(),
   },
@@ -166,7 +167,7 @@ export const PortfolioProvider: React.FC<{
   const [loading, setLoading] = useState(true);
 
   // -------------------------
-  // INITIALIZE PORTFOLIO
+  // INITIALIZE PORTFOLIO & ANALYTICS
   // -------------------------
 
   useEffect(() => {
@@ -215,11 +216,22 @@ export const PortfolioProvider: React.FC<{
 
           try {
             const lastVisit = new Date().toISOString();
+            const hasVisitedBefore = localStorage.getItem('portfolio_unique_visitor');
 
-            await updateDoc(portfolioRef, {
+            const updatePayload: Record<string, any> = {
               'analytics.total_visits': increment(1),
               'analytics.last_visit': lastVisit,
-            });
+            };
+
+            let uniqueIncrementValue = 0;
+
+            if (!hasVisitedBefore) {
+              localStorage.setItem('portfolio_unique_visitor', 'true');
+              updatePayload['analytics.unique_visitors'] = increment(1);
+              uniqueIncrementValue = 1;
+            }
+
+            await updateDoc(portfolioRef, updatePayload);
 
             if (isMounted) {
               setData((prev) => {
@@ -229,8 +241,8 @@ export const PortfolioProvider: React.FC<{
                   ...prev,
                   analytics: {
                     ...prev.analytics,
-                    total_visits:
-                      prev.analytics.total_visits + 1,
+                    total_visits: prev.analytics.total_visits + 1,
+                    unique_visitors: prev.analytics.unique_visitors + uniqueIncrementValue,
                     last_visit: lastVisit,
                   },
                 };

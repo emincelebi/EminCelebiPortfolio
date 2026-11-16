@@ -47,7 +47,7 @@ export const Admin: React.FC = () => {
 
   const [analyticsData, setAnalyticsData] = useState<AnalyticsData>({
     totalVisits: data?.analytics?.total_visits || 0,
-    uniqueVisitors: 0,
+    uniqueVisitors: data?.analytics?.unique_visitors || 0,
     totalProjects: data?.projects?.length || 0,
     totalMessages: messages.length,
     visitChangePercentage: 0,
@@ -73,7 +73,7 @@ export const Admin: React.FC = () => {
   useEffect(() => {
     setAnalyticsData({
       totalVisits: data?.analytics?.total_visits || 0,
-      uniqueVisitors: 0,
+      uniqueVisitors: data?.analytics?.unique_visitors || 0,
       totalProjects: data?.projects?.length || 0,
       totalMessages: messages.length,
       visitChangePercentage: 0,

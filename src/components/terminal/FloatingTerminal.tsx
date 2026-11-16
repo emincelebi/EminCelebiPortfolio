@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import type { GameType, CommandHistory } from '../terminal/terminalTypes';
-import { SnakeGame, InvadersGame, TicTacToeGame } from '../terminal/TerminalGames';
+import { SnakeGame, TicTacToeGame } from '../terminal/TerminalGames';
 
 const COMMAND_LIST = [
   'help', 'about', 'skills', 'projects', 'experience', 
@@ -42,7 +42,7 @@ export const FloatingTerminal: React.FC = () => {
 
   // Dalga Yönetimi
   const [wave, setWave] = useState(1);
-  const [waveKills, setWaveKills] = useState(0);
+  const [, setWaveKills] = useState(0);
   const [spawnedInWave, setSpawnedInWave] = useState(0);
 
   const getWaveQuota = (w: number) => {
@@ -243,7 +243,7 @@ export const FloatingTerminal: React.FC = () => {
           const damagedEnemies = [...currE];
 
           currB.forEach((b, bIdx) => {
-            damagedEnemies.forEach((e, eIdx) => {
+            damagedEnemies.forEach((e) => {
               if (b.x === e.x && Math.abs(b.y - e.y) <= 1) {
                 hitBullets.add(bIdx);
                 e.hp -= 1;

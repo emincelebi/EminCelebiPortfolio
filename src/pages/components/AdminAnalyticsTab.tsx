@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import { usePortfolio } from '../../context/PortfolioContext';
 
 interface AnalyticsData {
-  totalVisits: number;
-  uniqueVisitors: number;
+  total_visits?: number;
+  unique_visitors?: number;
+  totalVisits?: number;
+  uniqueVisitors?: number;
   totalProjects?: number;
   totalMessages?: number;
+  contact_submissions?: number;
 }
 
 interface AnalyticsTabProps {
@@ -13,23 +17,34 @@ interface AnalyticsTabProps {
 }
 
 export const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ initialData, activeContactsCount }) => {
-  const [analytics, setAnalytics] = useState<AnalyticsData>(initialData || {
-    totalVisits: 0,
-    uniqueVisitors: 0,
-    totalProjects: 0,
-    totalMessages: 0,
-  });
+  const { data: contextData } = usePortfolio();
 
   const [timeRange, setTimeRange] = useState<'7d' | '30d' | 'all'>('30d');
   const [isLoading] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<string>('');
 
   useEffect(() => {
-    if (initialData) {
-      setAnalytics(initialData);
-      setLastUpdated(new Date().toLocaleTimeString('tr-TR'));
-    }
-  }, [initialData]);
+    setLastUpdated(new Date().toLocaleTimeString('tr-TR'));
+  }, [initialData, contextData]);
+
+  // Öncelik sırası: Prop'tan gelen -> Context'ten gelen -> Varsayılan (0)
+  const totalVisits = 
+    initialData?.totalVisits ?? 
+    initialData?.total_visits ?? 
+    contextData?.analytics?.total_visits ?? 
+    0;
+
+  const uniqueVisitors = 
+    initialData?.uniqueVisitors ?? 
+    initialData?.unique_visitors ?? 
+    contextData?.analytics?.unique_visitors ?? 
+    0;
+
+  const totalMessages = 
+    initialData?.totalMessages ?? 
+    initialData?.contact_submissions ?? 
+    contextData?.analytics?.contact_submissions ?? 
+    0;
 
   return (
     <div className="space-y-6">
@@ -83,7 +98,7 @@ export const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ initialData, activeC
             <span className="text-xs font-mono text-[#8FA8A0] uppercase tracking-wider block mb-2">TOPLAM ZİYARET</span>
             <div className="flex items-baseline justify-between">
               <span className="text-3xl font-bold font-mono text-[#3CE8B5]">
-                {(analytics.totalVisits || 0).toLocaleString('tr-TR')}
+                {totalVisits.toLocaleString('tr-TR')}
               </span>
             </div>
           </div>
@@ -92,7 +107,7 @@ export const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ initialData, activeC
           <div className="bg-[#0B1915]/80 backdrop-blur-xl border border-emerald-500/15 rounded-3xl p-6 relative overflow-hidden group hover:border-emerald-400/50 hover:shadow-lg hover:shadow-emerald-400/5 transition-all">
             <span className="text-xs font-mono text-[#8FA8A0] uppercase tracking-wider block mb-2">TEKİL ZİYARETÇİ</span>
             <span className="text-3xl font-bold font-mono text-emerald-400">
-              {(analytics.uniqueVisitors || 0).toLocaleString('tr-TR')}
+              {uniqueVisitors.toLocaleString('tr-TR')}
             </span>
           </div>
 
@@ -108,7 +123,7 @@ export const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ initialData, activeC
           <div className="bg-[#0B1915]/80 backdrop-blur-xl border border-emerald-500/15 rounded-3xl p-6 relative overflow-hidden group hover:border-teal-300/40 transition-all">
             <span className="text-xs font-mono text-[#8FA8A0] uppercase tracking-wider block mb-2">TOPLAM MESAJ</span>
             <span className="text-3xl font-bold font-mono text-teal-300">
-              {analytics.totalMessages || 0}
+              {totalMessages}
             </span>
           </div>
 
