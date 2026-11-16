@@ -43,6 +43,15 @@ export interface Project {
   urlLabel?: string;
 }
 
+export interface VisitorItem {
+  id: string;
+  deviceType: string;
+  browser: string;
+  os: string;
+  screenResolution: string;
+  visitedAt: string;
+}
+
 export interface PortfolioData {
   profile: {
     name: string;
@@ -86,6 +95,7 @@ export type PortfolioUpdate = Pick<
 interface PortfolioContextType {
   data: PortfolioData | null;
   messages: MessageItem[];
+  visitors: VisitorItem[];
   loading: boolean;
 
   updatePortfolio: (newData: PortfolioUpdate) => Promise<void>;
@@ -97,6 +107,7 @@ interface PortfolioContextType {
   ) => Promise<boolean>;
 
   fetchMessages: () => Promise<void>;
+  fetchVisitors: () => Promise<void>;
 }
 
 // -------------------------
@@ -106,12 +117,46 @@ interface PortfolioContextType {
 const PORTFOLIO_COLLECTION = 'portfolio';
 const PORTFOLIO_DOCUMENT = 'main';
 const MESSAGES_COLLECTION = 'messages';
+const VISITORS_COLLECTION = 'visitors';
 
 const portfolioRef = doc(
   db,
   PORTFOLIO_COLLECTION,
   PORTFOLIO_DOCUMENT
 );
+
+// -------------------------
+// USER AGENT PARSER HELPER
+// -------------------------
+
+const parseUserAgent = () => {
+  const ua = navigator.userAgent;
+  let browser = 'Bilinmeyen Tarayıcı';
+  let os = 'Bilinmeyen İşletim Sistemi';
+  let deviceType = 'Masaüstü';
+
+  if (/Mobi|Android|iPhone/i.test(ua)) {
+    deviceType = /iPad|Tablet/i.test(ua) ? 'Tablet' : 'Mobil';
+  } else if (/iPad|Tablet/i.test(ua)) {
+    deviceType = 'Tablet';
+  }
+
+  if (/Windows NT/i.test(ua)) os = 'Windows';
+  else if (/Mac OS X/i.test(ua)) os = 'macOS';
+  else if (/Linux/i.test(ua)) os = 'Linux';
+  else if (/Android/i.test(ua)) os = 'Android';
+  else if (/iPhone|iPad|iPod/i.test(ua)) os = 'iOS';
+
+  if (/Edg/i.test(ua)) browser = 'Microsoft Edge';
+  else if (/Chrome/i.test(ua) && !/Chromium|Edg/i.test(ua)) browser = 'Google Chrome';
+  else if (/Safari/i.test(ua) && !/Chrome/i.test(ua)) browser = 'Apple Safari';
+  else if (/Firefox/i.test(ua)) browser = 'Mozilla Firefox';
+  else if (/OPR|Opera/i.test(ua)) browser = 'Opera';
+
+  const screenResolution = `${window.screen.width}x${window.screen.height}`;
+
+  return { deviceType, browser, os, screenResolution };
+};
 
 // -------------------------
 // DEFAULT DATA
@@ -164,6 +209,7 @@ export const PortfolioProvider: React.FC<{
 }> = ({ children }) => {
   const [data, setData] = useState<PortfolioData | null>(null);
   const [messages, setMessages] = useState<MessageItem[]>([]);
+  const [visitors, setVisitors] = useState<VisitorItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   // -------------------------
@@ -215,6 +261,7 @@ export const PortfolioProvider: React.FC<{
           }
 
           try {
+            const visitorInfo = parseUserAgent();
             const lastVisit = new Date().toISOString();
             const hasVisitedBefore = localStorage.getItem('portfolio_unique_visitor');
 
@@ -233,6 +280,12 @@ export const PortfolioProvider: React.FC<{
 
             await updateDoc(portfolioRef, updatePayload);
 
+            // Ziyaretçi detaylarını 'visitors' koleksiyonuna ekle
+            await addDoc(collection(db, VISITORS_COLLECTION), {
+              ...visitorInfo,
+              visitedAt: lastVisit,
+            });
+
             if (isMounted) {
               setData((prev) => {
                 if (!prev) return prev;
@@ -250,7 +303,7 @@ export const PortfolioProvider: React.FC<{
             }
           } catch (analyticsError) {
             console.error(
-              'Ziyaretçi istatistiği güncellenemedi:',
+              'Ziyaretçi istatistiği veya logu güncellenemedi:',
               analyticsError
             );
           }
@@ -432,6 +485,45 @@ export const PortfolioProvider: React.FC<{
   );
 
   // -------------------------
+  // FETCH VISITORS
+  // -------------------------
+
+  const fetchVisitors = useCallback(
+    async (): Promise<void> => {
+      try {
+        const visitorsQuery = query(
+          collection(db, VISITORS_COLLECTION),
+          orderBy('visitedAt', 'desc')
+        );
+
+        const snapshot = await getDocs(visitorsQuery);
+
+        const fetchedVisitors: VisitorItem[] =
+          snapshot.docs.map((docSnap) => {
+            const d = docSnap.data();
+            return {
+              id: docSnap.id,
+              deviceType: d.deviceType || 'Bilinmiyor',
+              browser: d.browser || 'Bilinmiyor',
+              os: d.os || 'Bilinmiyor',
+              screenResolution: d.screenResolution || '-',
+              visitedAt: d.visitedAt || new Date().toISOString(),
+            };
+          });
+
+        setVisitors(fetchedVisitors);
+
+      } catch (error) {
+        console.error(
+          'Ziyaretçi logları alınamadı:',
+          error
+        );
+      }
+    },
+    []
+  );
+
+  // -------------------------
   // PROVIDER VALUE
   // -------------------------
 
@@ -440,10 +532,12 @@ export const PortfolioProvider: React.FC<{
       value={{
         data,
         messages,
+        visitors,
         loading,
         updatePortfolio,
         sendMessage,
         fetchMessages,
+        fetchVisitors,
       }}
     >
       {children}

@@ -12,11 +12,9 @@ import type {
 
 import { LoginForm } from '../pages/components/AdminLoginForm';
 import { AnalyticsTab } from '../pages/components/AdminAnalyticsTab';
-import {
-  ProjectsTab,
-  type NewProject,
-} from '../pages/components/AdminProjectsTab';
+import { ProjectsTab, type NewProject } from '../pages/components/AdminProjectsTab';
 import { MessagesTab } from '../pages/components/AdminMessagesTab';
+import { AdminVisitorsTab } from '../pages/components/AdminVisitorsTab';
 
 const ADMIN_USERNAME = 'admin';
 const ADMIN_PASSWORD = '1234';
@@ -33,7 +31,9 @@ export const Admin: React.FC = () => {
   const {
     data,
     messages,
+    visitors,
     fetchMessages,
+    fetchVisitors,
     updatePortfolio,
   } = usePortfolio();
 
@@ -41,7 +41,7 @@ export const Admin: React.FC = () => {
     () => sessionStorage.getItem('admin_auth') === 'true'
   );
 
-  const [activeTab, setActiveTab] = useState<AdminTab>('analytics');
+  const [activeTab, setActiveTab] = useState<AdminTab | 'visitors'>('analytics');
   const [selectedEmail, setSelectedEmail] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
 
@@ -67,8 +67,9 @@ export const Admin: React.FC = () => {
   useEffect(() => {
     if (isAuthenticated) {
       fetchMessages();
+      fetchVisitors();
     }
-  }, [isAuthenticated, fetchMessages]);
+  }, [isAuthenticated, fetchMessages, fetchVisitors]);
 
   useEffect(() => {
     setAnalyticsData({
@@ -266,6 +267,17 @@ export const Admin: React.FC = () => {
           </button>
 
           <button
+            onClick={() => setActiveTab('visitors')}
+            className={`px-5 py-2.5 rounded-xl text-xs font-mono transition-all cursor-pointer ${
+              activeTab === 'visitors'
+                ? 'bg-[#3CE8B5] text-[#050C0A] font-bold shadow-md shadow-[#3CE8B5]/20'
+                : 'bg-[#0B1915] text-[#8FA8A0] border border-emerald-500/15 hover:text-white'
+            }`}
+          >
+            🖥️ Ziyaretçi Cihazları ({visitors.length})
+          </button>
+
+          <button
             onClick={() => setActiveTab('projects')}
             className={`px-5 py-2.5 rounded-xl text-xs font-mono transition-all cursor-pointer ${
               activeTab === 'projects'
@@ -289,7 +301,7 @@ export const Admin: React.FC = () => {
 
         </div>
 
-        {/* İstatistikler */}
+        {/* Sekme İçerikleri */}
         {activeTab === 'analytics' && (
           <AnalyticsTab
             initialData={analyticsData}
@@ -297,7 +309,10 @@ export const Admin: React.FC = () => {
           />
         )}
 
-        {/* Projeler */}
+        {activeTab === 'visitors' && (
+          <AdminVisitorsTab visitors={visitors} />
+        )}
+
         {activeTab === 'projects' && (
           <ProjectsTab
             projects={data?.projects}
@@ -306,7 +321,6 @@ export const Admin: React.FC = () => {
           />
         )}
 
-        {/* Mesajlar */}
         {activeTab === 'messages' && (
           <MessagesTab
             filteredContacts={filteredContacts}
